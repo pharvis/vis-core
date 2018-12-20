@@ -2,42 +2,42 @@
 
 namespace Core\Web\Http;
 
-use Core\Common\Arr;
-
 class Session{
     
-    protected $collection = null;
+    protected $collection = [];
     protected $sessionActive = false;
     
-    public function __construct(){
-        $this->collection = new Arr(); 
-    }
-
     public function start() : Session{
         if(!$this->sessionActive){
             session_start();
-            $session = &$_SESSION;
-            $this->collection = new Arr($session); 
+            $this->collection = &$_SESSION;
             $this->sessionActive = true;
         }
         return $this;
     }
     
     public function set($key, $value) : Session{
-        $this->collection->add($key, $value);
+        $this->collection[$key] = $value;
         return $this;
     }
     
     public function get(string $key, $default = null){
-        return $this->collection->get($key, $default);
+        if($this->exists($key)){
+            return $this->collection[$key];
+        }
+        return $default;
     }
     
     public function exists($key) : bool{
-        return $this->collection->exists($key);
+        return array_key_exists($key, $this->collection);
     }
     
     public function remove($key) : bool{
-         $this->collection->remove($key);
+        if($this->exists($key)){
+            unset($this->collection[$key]);
+            return true;
+        }
+        return false;
     }
     
     public function setName(string $name) : Session{
