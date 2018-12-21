@@ -24,4 +24,8 @@ final class Configuration{
     public function exists(string $name) : bool{
         return array_key_exists($name, $this->collection);
     }
+    
+    public function __debuginfo(){
+        return array_keys($this->collection);
+    }
 }

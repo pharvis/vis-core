@@ -5,6 +5,10 @@ namespace Core\Web;
 use Core\Common\Obj;
 use Core\Common\Str;
 use Core\Configuration\ConfigurationManager;
+use Core\Configuration\ExceptionHandlerSection;
+use Core\Configuration\RouteSection;
+use Core\Configuration\SettingsSection;
+use Core\Configuration\ModulesSection;
 use Core\Web\Http\Server;
 use Core\Web\Http\Request;
 use Core\Web\Http\Response;
@@ -21,12 +25,21 @@ final class Application{
     public function run(string $baseDir, ConfigurationManager $configManager){
         
         $this->configManager = $configManager;
+        
         $server = new Server($baseDir);
         $request = new Request($server);
         $response = new Response($server);
         $this->httpContext = new HttpContext($request, $response);
+        
+        $this->configManager
+            ->executeSection(new ExceptionHandlerSection())
+            ->executeSection(new RouteSection())
+            ->executeSection(new SettingsSection())
+            ->executeSection(new ModulesSection());
+        
         $routes = $this->configManager->getConfiguration()->get('routes');
- 
+        $modules = $this->configManager->getConfiguration()->get('modules');
+
         foreach($routes as $route){ 
             if($route->execute($request)){
                 $class = (string)Str::set($route->getControllerClass())->replaceTokens(
@@ -42,8 +55,19 @@ final class Application{
                 }
 
                 if($controller instanceof GenericController){
+
+                    foreach($modules as $module){
+                        $module->load($this->httpContext);
+                    }
+                    
                     $controller->service($this->httpContext);
+                    
+                    foreach($modules as $module){
+                        $module->unload($this->httpContext);
+                    }
+                    
                     $this->httpContext->getResponse()->flush();
+                    
                 }else{
                     throw new HttpException("$class must be an instance of GenericService");
                 }

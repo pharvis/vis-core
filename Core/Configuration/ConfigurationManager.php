@@ -9,16 +9,6 @@ class ConfigurationManager{
     public function __construct(\SimpleXMLElement $xml){
         $this->xml = $xml;
         $this->configuration = new Configuration();
-        
-        $sections = [
-            new RouteSection(),
-            new SettingsSection(),
-            new ExceptionHandlerSection(),
-        ];
-        
-        foreach($sections as $section){
-            $this->executeSection($section);
-        }
     }
     
     public function getConfiguration(){
@@ -27,5 +17,10 @@ class ConfigurationManager{
     
     public function executeSection(IConfigurationSection $section){
         $section->execute($this->configuration, $this->xml);
+        return $this;
+    }
+    
+    public function __debuginfo(){
+        return [$this->configuration];
     }
 }

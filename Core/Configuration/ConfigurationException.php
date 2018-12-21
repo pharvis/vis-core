@@ -2,4 +2,4 @@
 
 namespace Core\Configuration;
 
-class ConfigurationException extends Core\Web\Http\HttpException{}
+class ConfigurationException extends \Core\Web\Http\HttpException{}
