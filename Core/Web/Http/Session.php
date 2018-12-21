@@ -16,7 +16,7 @@ class Session{
         return $this;
     }
     
-    public function set($key, $value) : Session{
+    public function set(string $key, $value) : Session{
         $this->collection[$key] = $value;
         return $this;
     }
@@ -28,11 +28,11 @@ class Session{
         return $default;
     }
     
-    public function exists($key) : bool{
+    public function exists(string $key) : bool{
         return array_key_exists($key, $this->collection);
     }
     
-    public function remove($key) : bool{
+    public function remove(string $key) : bool{
         if($this->exists($key)){
             unset($this->collection[$key]);
             return true;

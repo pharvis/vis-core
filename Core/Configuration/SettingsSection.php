@@ -23,7 +23,7 @@ class SettingsSection implements IConfigurationSection{
             if(is_file($settings['include'])){
                 $this->loadSettings(simplexml_load_file($settings['include']));
             }else{
-                throw new \Exception('not found');
+                throw new \Exception(sprintf("Unable to include configuration section. File not '%s' not found.", $settings['include']));
             }
         }
     }
