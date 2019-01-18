@@ -17,11 +17,13 @@ class Session{
     }
     
     public function set(string $key, $value) : Session{
+        $this->sessionActive();
         $this->collection[$key] = $value;
         return $this;
     }
     
     public function get(string $key, $default = null){
+        $this->sessionActive();
         if($this->exists($key)){
             return $this->collection[$key];
         }
@@ -29,10 +31,12 @@ class Session{
     }
     
     public function exists(string $key) : bool{
+        $this->sessionActive();
         return array_key_exists($key, $this->collection);
     }
     
     public function remove(string $key) : bool{
+        $this->sessionActive();
         if($this->exists($key)){
             unset($this->collection[$key]);
             return true;
@@ -64,5 +68,11 @@ class Session{
 
     public function destroy() : bool{
         return session_destroy();
+    }
+    
+    protected function sessionActive(){
+        if(false == $this->sessionActive){
+            throw new \Core\Web\Http\HttpException("Session not active");
+        }
     }
 }

@@ -4,5 +4,5 @@ namespace Core\Configuration;
 
 interface IConfigurationSection{
    
-    public function execute(Configuration $configuration, \SimpleXMLElement $xml);
+    public function execute(Configuration $configuration, \XmlConfigElement $xml);
 }

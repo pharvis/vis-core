@@ -48,7 +48,7 @@ final class Application{
                     ->toArray()
                 )->replace('.', '\\');
 
-                if(Obj::exists($class)){ 
+                if(Obj::exists($class)){
                     $controller = new $class($this->configManager);
                 }else{
                     throw new ControllerNotFoundException("the service controller not found");
@@ -76,7 +76,7 @@ final class Application{
         throw new ControllerNotFoundException("Unable to dispatch a controller. No routes matched the request uri.");
     }
     
-    public function error(\Exception $e){
+    public function error(\Exception $e){ print_R($e);
         $exceptionType = get_class($e);
 
         foreach($this->configManager->getConfiguration()->get('exceptionHandlers') as $handler){

@@ -4,9 +4,10 @@ namespace Core\Configuration;
 
 class ConfigurationManager{
     
+    private $xml = null;
     private $configuration = null;
     
-    public function __construct(\SimpleXMLElement $xml){
+    public function __construct(\XmlConfigElement $xml){
         $this->xml = $xml;
         $this->configuration = new Configuration();
     }
@@ -18,9 +19,5 @@ class ConfigurationManager{
     public function executeSection(IConfigurationSection $section){
         $section->execute($this->configuration, $this->xml);
         return $this;
-    }
-    
-    public function __debuginfo(){
-        return [$this->configuration];
     }
 }

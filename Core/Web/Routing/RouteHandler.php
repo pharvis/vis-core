@@ -8,7 +8,7 @@ class RouteHandler{
     
     public function execute(Request $request, string $urlPattern) : bool{
 
-        $pattern = str_replace('{', '(?P<', str_replace('}', '>.+)', $urlPattern));
+        $pattern = str_replace('{', '(?P<', str_replace('}', '>[a-zA-Z0-9-_.,:;()]+)', $urlPattern));
         $matches = [];
 
         if(preg_match('#^'.$pattern.'$#', $request->getUrl()->getUri(), $matches)){

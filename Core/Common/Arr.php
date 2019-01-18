@@ -17,8 +17,23 @@ class Arr implements \ArrayAccess, \IteratorAggregate, \Countable{
         return $default;
     }
     
-    public function add(string $key, $value){
-        $this->collection[$key] = $value;
+    public function getString(string $key, $default = ''){
+        if($this->exists($key)){
+            $value = $this->collection[$key];
+            if(is_scalar($value)){
+                return new Str($value);
+            }
+        }
+        return new Str($default);
+    }
+    
+    public function add(...$args){
+        if(count($args) == 1){
+            $this->collection[] = $args[0];
+        }
+        elseif(count($args) == 2){
+            $this->collection[$args[0]] = $args[1];
+        }
         return $this;
     }
     
@@ -49,6 +64,10 @@ class Arr implements \ArrayAccess, \IteratorAggregate, \Countable{
     public function exists(string $key) : bool{
         return array_key_exists($key, $this->collection);
     }
+    
+    public function contains($value) : bool{
+        return in_array($value, $this->collection);
+    }
 
     public function count() : int{
         return count($this->collection);
@@ -70,6 +89,26 @@ class Arr implements \ArrayAccess, \IteratorAggregate, \Countable{
     
     public function map(callable $function) : Arr{
         $this->collection = array_map($function, $this->collection);
+        return $this;
+    }
+    
+    public function each(callable $function){
+        foreach($this->collection as $key => $value){
+            $function($key, $value);
+            $i++;
+        }
+    }
+    
+    public function first(){
+        return reset($this->collection);
+    }
+    
+    public function last(){
+        return end($this->collection);
+    }
+    
+    public function clear(){
+        $this->collection = [];
         return $this;
     }
 
@@ -118,5 +157,9 @@ class Arr implements \ArrayAccess, \IteratorAggregate, \Countable{
     
     public function getIterator(){
         return new \ArrayIterator($this->collection);
+    }
+    
+    public static function unserialize(string $string) : Arr{
+        return new Arr(unserialize($string));
     }
 }

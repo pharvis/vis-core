@@ -58,4 +58,15 @@ final class Request{
     public function getSession() : Session{
         return $this->session;
     }
+    
+    public function getPost(string $name = '', $default = null){
+        if($name){
+            return $this->post->get($name, $default);
+        }
+        return $this->post;
+    }
+    
+    public function isPost() : bool{
+        return $this->server->get('REQUEST_METHOD') == 'POST' ? true : false;
+    }
 }

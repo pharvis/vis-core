@@ -25,7 +25,5 @@ final class Configuration{
         return array_key_exists($name, $this->collection);
     }
     
-    public function __debuginfo(){
-        return array_keys($this->collection);
-    }
+
 }

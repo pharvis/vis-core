@@ -6,23 +6,26 @@ use Core\Web\Routing\Route;
 
 class RouteSection implements IConfigurationSection{
     
-    public function execute(Configuration $configuration, \SimpleXMLElement $xml){
+    public function execute(Configuration $configuration, \XmlConfigElement $xml){
         $routes = [];
-        
-        foreach($xml->xpath('//urlPattern') as $urlPattern){
 
-            $attrs = $urlPattern->attributes();
-            $handler = isset($attrs['handler']) ? (string)$attrs['handler'] : 'Core.Web.Routing.RouteHandler';
-            
-            $routes[] = new Route(
-                (string)$urlPattern, 
-                $handler,
-                (string)$urlPattern->xpath('../..')[0]->class
-            );
+        if($xml->hasPath('routing.0.route')){
+            foreach($xml->routing[0]->route as $route){
+
+                $patterns = $route->urls[0]->urlPattern;
+
+                foreach($patterns as $pattern){
+                    $routes[] = new Route(
+                        $pattern,
+                        'Core.Web.Routing.RouteHandler',
+                        $route->class[0]
+                    );
+                }
+                
+            }
         }
         
         $configuration->add('routes', $routes);
-        unset($routes);
     }
 }
 

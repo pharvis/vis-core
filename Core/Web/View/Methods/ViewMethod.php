@@ -11,7 +11,7 @@ abstract class ViewMethod{
         return $this;
     }
     
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments){
         if($this->methods->exists($name)){
             $class = $this->methods->get($name);
             $class->addMethods($this->methods->toArray());

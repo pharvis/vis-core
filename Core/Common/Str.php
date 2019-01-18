@@ -48,17 +48,47 @@ final class Str{
     /**
      * Get a substring from the current Str object.
      */
-    public function subString(int $start, int $length = null) : Str{
-        $this->string = substr($this->string, $start, $length);
+    public function subString(int $start, int $length = 0) : Str{
+        if($length > 0){
+            $this->string = substr($this->string, $start, $length);
+        }else{
+            $this->string = substr($this->string, $start);
+        }
         return $this;
     }
     
     /**
-     * Gets the zero-based index of the first occurrence of a specified character
+     * Gets the zero-based index of the first occurrence of $needle
      * from the current Str object.
      */
     public function indexOf(string $needle , int $offset = 0) : int{        
         return stripos($this->string, $needle, $offset);
+    }
+    
+    /**
+     * Gets the string after the last occurrence of $needle.
+     */
+    public function getBeforeLastIndexOf(string $needle) : Str{   
+        $pos = strripos($this->string, $needle);
+        if($pos > -1){
+            $this->string = substr($this->string, 0, $pos);
+        }else{
+            $this->string = '';
+        }
+        return $this;
+    }
+    
+    /**
+     * Gets the string after the last occurrence of $needle.
+     */
+    public function getAfterLastIndexOf(string $needle) : Str{   
+        $pos = strripos($this->string, $needle);
+        if($pos > -1){
+            $this->string = substr($this->string, $pos+1);
+        }else{
+            $this->string = '';
+        }
+        return $this;
     }
 
     /**

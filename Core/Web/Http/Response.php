@@ -72,8 +72,8 @@ final class Response{
         $this->headers->add($header, $value);
     }
     
-    public function setContentType(string $contentType, string $encoding = null){
-        $this->addHeader('Content-type', $contentType . '; charset=' . ((null === $encoding) ? $this->output->getEncoding() : $encoding));
+    public function setContentType(string $contentType, string $encoding = 'UTF8'){
+        $this->addHeader('Content-type', $contentType . '; charset=' . $encoding);
         return $this;
     }
     
@@ -85,6 +85,11 @@ final class Response{
     public function write(string $string){
         $this->output->append($string);
         return $this;
+    }
+    
+    public function redirect(string $location){
+        header('Location: ' . $location);
+        exit;
     }
     
     public function flush(){
