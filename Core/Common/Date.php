@@ -4,8 +4,8 @@ namespace Core\Common;
 
 class Date extends \DateTime{
     
-    public function addHours(int $hours) : Date{
-        $this->modify($hours.' hour');
+    public function addSeconds(int $seconds) : Date{
+        $this->modify($seconds.' second');
         return $this;
     }
     
@@ -14,11 +14,11 @@ class Date extends \DateTime{
         return $this;
     }
     
-    public function addSeconds(int $seconds) : Date{
-        $this->modify($seconds.' second');
+    public function addHours(int $hours) : Date{
+        $this->modify($hours.' hour');
         return $this;
     }
-    
+
     public function addDays(int $days) : Date{
         $this->modify($days.' day');
         return $this;

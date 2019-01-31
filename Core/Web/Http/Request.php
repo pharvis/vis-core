@@ -12,6 +12,7 @@ final class Request{
     private $parameter = null;
     private $get = null;
     private $post = null;
+    private $cookies = null;
     private $session = null;
 
     public function __construct(Server $server){
@@ -20,6 +21,7 @@ final class Request{
         $this->parameter = new Arr();
         $this->get = new Arr($_GET);
         $this->post = new Arr($_POST);
+        $this->cookies = new CookieCollection($_COOKIE);
         $this->session = new Session();
     }
     
@@ -53,6 +55,10 @@ final class Request{
     
     public function getServer() : Server{
         return $this->server;
+    }
+    
+    public function getCookies() : CookieCollection{
+        return $this->cookies;
     }
     
     public function getSession() : Session{

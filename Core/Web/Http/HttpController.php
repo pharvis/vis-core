@@ -16,7 +16,7 @@ abstract class HttpController extends GenericController{
     
     public function head(HttpContext $httpContext){}
     
-    public function service(HttpContext $httpContext){
+    public function service(HttpContext $httpContext) : void{
 
         switch($httpContext->getRequest()->getMethod()){
             case 'GET':

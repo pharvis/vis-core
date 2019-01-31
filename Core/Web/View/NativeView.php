@@ -12,11 +12,13 @@ class NativeView implements IView{
     protected $childOutput = '';
     protected $layoutView = null;
     protected $methods = null;
+    protected $parameters = null;
     
     public function __construct(NativeView $layoutView = null){
         $this->layoutView = $layoutView;
         $this->viewFiles = new Arr();
         $this->methods = new Arr();
+        $this->parameters = new Arr();
     }
     
     public function setLayout($viewFile){
@@ -46,13 +48,18 @@ class NativeView implements IView{
         $this->methods->merge($methods);
         return $this;
     }
+    
+    public function addParameter(string $name, $value){
+        $this->parameters->add($name, $value);
+    }
 
     public function renderBody(){
         echo $this->childOutput;
     }
 
     public function render(array $params = []){
-        extract($params);
+        $this->parameters->merge($params);
+        extract($this->parameters->toArray());
         $output = '';
 
         foreach($this->viewFiles as $viewFile){

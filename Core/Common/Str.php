@@ -2,12 +2,16 @@
 
 namespace Core\Common;
 
+/**
+ * A mutable string class, which is used to manipulate a string. This class does
+ * not support multi-byte characters such as UTF8. This class cannot be inherited.
+ */
 final class Str{
     
     private $string = '';
 
     /**
-     * Initializes a new instance of Str. This class cannot be inherited.
+     * Initializes a new instance of Str with $string.
      */
     public function __construct(string $string = ''){
         $this->string = $string;
@@ -21,7 +25,7 @@ final class Str{
     }
     
     /**
-     * Appends a string in the current Str object.
+     * Appends a string to the current Str object.
      */
     public function append(string $string) : Str{
         $this->string .= $string;
@@ -46,7 +50,7 @@ final class Str{
     }
     
     /**
-     * Get a substring from the current Str object.
+     * Gets a substring from the current Str object.
      */
     public function subString(int $start, int $length = 0) : Str{
         if($length > 0){
@@ -66,7 +70,7 @@ final class Str{
     }
     
     /**
-     * Gets the string after the last occurrence of $needle.
+     * Gets the string before the last occurrence of $needle.
      */
     public function getBeforeLastIndexOf(string $needle) : Str{   
         $pos = strripos($this->string, $needle);
@@ -119,7 +123,23 @@ final class Str{
      * Converts the last character in the current Str object to uppercase.
      */
     public function toUpperLast() : Str{
-        $this->string = substr($this->string, 0, strlen($this->string) -1) . substr($this->string, 0, 1);
+        $this->string = strrev(ucfirst(strrev($this->string)));
+        return $this;
+    }
+    
+    /**
+     * Converts the first character in the current Str object to lowercase.
+     */
+    public function toLowerFirst() : Str{ 
+        $this->string = lcfirst($this->string);
+        return $this;
+    }
+    
+    /**
+     * Converts the last character in the current Str object to lowercase.
+     */
+    public function toLowerLast() : Str{
+        $this->string = strrev(lcfirst(strrev($this->string)));
         return $this;
     }
     
@@ -160,7 +180,7 @@ final class Str{
     }
     
     /**
-     * Replaces all occurrences of tokens using an array in the current Str object. 
+     * Replaces all occurrences of element in $tokens in the current Str object. 
      */
     public function replaceTokens(array $tokens) : Str{
         foreach($tokens as $key => $string){ 
@@ -192,21 +212,28 @@ final class Str{
      * specified $string.
      */
     public function startsWith(string $string) : bool{
-        $len = strlen($string);
-        return substr($this->string, 0, $len) == $string ? true : false;
+        return substr($this->string, 0, strlen($string)) == $string ? true : false;
+    }
+    
+    /**
+     * Gets a boolean value indicating if the current string ends with the
+     * specified $string.
+     */
+    public function endsWith(string $string) : bool{
+        return substr($this->string, strlen($this->string) - strlen($string)) == $string ? true : false;
     }
 
     /**
      * Gets the underlying string.
      */
-    public function toString(){
+    public function toString() : string{
         return $this->__toString();
     }
     
     /**
      * Gets the underlying string.
      */
-    public function __toString(){
+    public function __toString() : string{
         return $this->string;
     }
     
@@ -215,7 +242,7 @@ final class Str{
     }
     
     /**
-     * Gets a new Str object.
+     * Gets a new Str object initialized with $string
      */
     public static function set(string $string) : Str{
         return new Str($string);

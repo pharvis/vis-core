@@ -16,6 +16,6 @@ abstract class GenericController{
         return $this->configManager;
     }
     
-    public abstract function service(HttpContext $httpContext);
+    public abstract function service(HttpContext $httpContext) : void;
     
 }

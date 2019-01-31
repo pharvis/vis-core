@@ -14,8 +14,9 @@ abstract class ViewMethod{
     public function __call($name, $arguments){
         if($this->methods->exists($name)){
             $class = $this->methods->get($name);
-            $class->addMethods($this->methods->toArray());
+            $class->addMethods($this->methods);
             return $class->execute(...$arguments);
         }
+        throw new \Exception("Method not found $name");
     }
 }

@@ -5,14 +5,25 @@ namespace Core\Web\Http;
 class Session{
     
     protected $collection = [];
-    protected $sessionActive = false;
+    protected $options = [];
     
+    public function __construct(array $options = []){
+        $this->setOptions($options);
+    }
+    
+    public function setOptions(array $options) : Session{
+        $params = array_merge(session_get_cookie_params(), $options);
+        session_set_cookie_params($params['lifetime'], $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        return $this;
+    }
+    
+    public function getOptions() : array{
+        return session_get_cookie_params();
+    }
+
     public function start() : Session{
-        if(!$this->sessionActive){
-            session_start();
-            $this->collection = &$_SESSION;
-            $this->sessionActive = true;
-        }
+        session_start();
+        $this->collection = &$_SESSION;
         return $this;
     }
     
@@ -44,6 +55,11 @@ class Session{
         return false;
     }
     
+    public function clear() : void{
+        $this->sessionActive();
+        $this->collection = [];
+    }
+    
     public function setName(string $name) : Session{
         session_name($name);
         return $this;
@@ -62,17 +78,22 @@ class Session{
         return session_id(); 
     }
     
-    public function isActive() : bool{
-        return $this->sessionActive;
+    public function getStatus() : int{
+        return session_status();
     }
 
     public function destroy() : bool{
+        $this->sessionActive();
+        
+        if (ini_get("session.use_cookies")){
+            setcookie(session_name(), '', -1);
+        }
         return session_destroy();
     }
     
-    protected function sessionActive(){
-        if(false == $this->sessionActive){
-            throw new \Core\Web\Http\HttpException("Session not active");
+    private function sessionActive(){
+        if(session_status() != PHP_SESSION_ACTIVE){
+            throw new \Core\Web\Http\SessionException("Session not active");
         }
     }
 }

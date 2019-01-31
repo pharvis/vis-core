@@ -28,7 +28,7 @@ class ExceptionController extends HttpController{
         $this->handleRequest($httpContext);
     }
     
-    protected function handleRequest(HttpContext $httpContext){ //print_R($httpContext->getRequest()->getException());
+    protected function handleRequest(HttpContext $httpContext){
         $httpContext->getResponse()->write($httpContext->getRequest()->getException()->getMessage());
     }
 }

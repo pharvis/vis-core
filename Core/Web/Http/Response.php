@@ -8,6 +8,7 @@ use Core\Common\Str;
 final class Response{
     
     private $server = null;
+    private $cookies = null;
     private $output = null;
     private $headers = [];
     private $statusCode = 200;
@@ -64,6 +65,7 @@ final class Response{
 
     public function __construct(Server $server){
         $this->server = $server; 
+        $this->cookies = new CookieCollection();
         $this->headers = new Arr();
         $this->output = new Str();
     }
@@ -80,6 +82,14 @@ final class Response{
     public function setStatusCode(int $statusCode){
         $this->statusCode = $statusCode;
         return $this;
+    }
+    
+    public function getHeaders(){
+        return $this->headers;
+    }
+    
+    public function getCookies(){
+        return $this->cookies;
     }
 
     public function write(string $string){
@@ -102,8 +112,13 @@ final class Response{
             foreach($this->headers as $header => $value){
                 header($header . ':'. $value, true);
             }
+
+            foreach($this->cookies as $cookie){
+                setcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpires(), $cookie->getPath(), $cookie->getDomain(), $cookie->getSecure(), $cookie->getHttpOnly());
+            }
+            
+            echo $this->output;
         }
-        echo $this->output;
         exit;
     }
 }

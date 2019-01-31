@@ -44,7 +44,7 @@ final class Application{
             if($route->execute($request)){
                 $class = (string)Str::set($route->getControllerClass())->replaceTokens(
                     $request->getParameters()
-                    ->map(function($v){ return (string)Str::set($v)->toUpperFirst(); })
+                    ->each(function($v){ return Str::set($v)->toUpperFirst(); })
                     ->toArray()
                 )->replace('.', '\\');
 

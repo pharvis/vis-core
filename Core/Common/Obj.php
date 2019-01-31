@@ -2,64 +2,63 @@
 
 namespace Core\Common;
 
+use ReflectionObject;
+
+/**
+ * A convenience class to help create and manipulate objects dynamically using
+ * reflection. This class cannot be inherited.
+ */
 final class Obj{
     
     private $object = null;
     
-    public function __construct($object){
+    /**
+     * Initializes a new instance of Obj with the object to be reflected.
+     */
+    public function __construct(object $object){
         $this->object = $object;
     }
     
+    /**
+     * Gets a boolean value indicating if the supplied object has the specified 
+     * $methodName.
+     */
     public function hasMethod(string $methodName) : bool{
-        $reflect = new \ReflectionObject($this->object);
+        $reflect = new ReflectionObject($this->object);
         return $reflect->hasMethod($methodName);
     }
     
+    /**
+     * Gets a boolean value indicating if the supplied object has the specified 
+     * $propertyName.
+     */
     public function hasProperty(string $propertyName) : bool{
-        $reflect = new \ReflectionObject($this->object);
+        $reflect = new ReflectionObject($this->object);
         return $reflect->hasProperty($propertyName);
     }
     
-    public function invokeMethod(string $method, Arr $args){
-        $reflect = new \ReflectionMethod($this->object, $method);
-        $actionArgs = new Arr();
-        
-        foreach($reflect->getParameters() as $param){
-            $defaultValue = $param->isOptional() ? $param->getDefaultValue() : null;
-
-            switch($param->getType()){
-                case '':
-                case 'string':
-                case 'int':
-                case 'float':
-                case 'bool':
-                    if($args->exists($param->name) && $args->get($param->name) != null){
-                        $actionArgs->addIndex($args->get($param->name));
-                    }else{
-                        $actionArgs->addIndex($defaultValue);
-                    }
-                    break;
-                default:
-                    if($args->exists($param->name)){
-                        $reflectType = new \ReflectionClass($param->getType());
-
-                        if($reflectType->getConstructor()){
-                            $actionArgs->addIndex($this->create($param->getType(), [$args->get($param->name)])->get());
-                        }else{
-                            $actionArgs->addIndex($this->create($param->getType())->setProperties($args->get($param->name))->get());
-                        }
-                    }else{
-                        $actionArgs->addIndex($this->create($param->getType())->get());
-                    }
-                    break;
-            }
-        }
-        return $reflect->invokeArgs($this->object, $actionArgs->toArray());
+    /**
+     * Gets a boolean value indicating if the supplied object has a constructor.
+     */
+    public function hasConstructor() : bool{
+        $reflect = new ReflectionObject($this->object);
+        return $reflect->getConstructor() ? true : false;
+    }
+    
+    /**
+     * Invokes a method of the supplied object using the specified $methodName.
+     */
+    public function invokeMethod(string $methodName, array $args){
+        $reflect = new \ReflectionMethod($this->object, $methodName);
+        return $reflect->invokeArgs($this->object, $args);
     }
 
-    public function setProperties(array $properties = [], array $modifiers = [\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PROTECTED]){
-        $reflect = new \ReflectionObject($this->object);
-        foreach($properties as $key=>$value){
+    /**
+     * Sets the objects properties using the specified array $properties.
+     */
+    public function setProperties(array $properties = [], array $modifiers = [\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PROTECTED]) : Obj{
+        $reflect = new ReflectionObject($this->object);
+        foreach($properties as $key => $value){
             if($reflect->hasProperty($key)){ 
                 $property = $reflect->getProperty($key);
                 if(in_array($property->getModifiers(), $modifiers)){
@@ -70,33 +69,66 @@ final class Obj{
         }
         return $this;
     }
-   
-    public function get(){
+    
+    /**
+     * Gets the supplied objects constructor or null if the object has 
+     * no constructor.
+     */
+    public function getConstructor(){
+        $reflect = new ReflectionObject($this->object);
+        return $reflect->getConstructor();
+    }
+    
+    /**
+     * Gets any array of method parameters.
+     */
+    public function getMethodParameters(string $methodName) : array{
+        $reflect = new \ReflectionMethod($this->object, $methodName);
+        return $reflect->getParameters();
+    }
+
+    /**
+     * Gets the object.
+     */
+    public function get() : object{
         return $this->object;
     }
 
-    public function getNamespace(){
+    /**
+     * Gets the namespace the object belongs to.
+     */
+    public function getNamespace() : string{
         $class = get_class($this->object);
         $parts = explode('\\', $class);
         array_pop($parts);
         return join('\\', $parts);
     }
 
-    public static function create(string $className, array $args = []){
+    /**
+     * Creates an object using the specified $className. Returns a new instance
+     * of Obj.
+     */
+    public static function create(string $className, array $args = []) : Obj{
         $reflect = new \ReflectionClass(str_replace('.', '\\', $className));
 
         if(count($args) > 0){
-            return  new Obj($reflect->newInstanceArgs($args));
+            return new Obj($reflect->newInstanceArgs($args));
         }else{
             return new Obj($reflect->newInstance());
         }
     }
     
-    public static function from($object){
+    /**
+     * Gets a new Obj instance that encapsulates the object to be reflected.
+     */
+    public static function from(object $object) : Obj{
         return new Obj($object);
     }
     
-    public static function exists(string $className){
+    /**
+     * Gets a boolean value indicating if the specified class exists.
+     */
+    public static function exists(string $className) : bool{
         return class_exists(str_replace('.', '\\', $className));
     }
 }

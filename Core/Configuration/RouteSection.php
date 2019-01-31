@@ -21,7 +21,6 @@ class RouteSection implements IConfigurationSection{
                         $route->class[0]
                     );
                 }
-                
             }
         }
         
