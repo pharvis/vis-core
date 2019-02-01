@@ -2,45 +2,61 @@
 
 namespace Core\Web\Http;
 
-abstract class HttpController extends GenericController{
-    
-    public function get(HttpContext $httpContext){}
+use Core\Configuration\Configuration;
 
-    public function post(HttpContext $httpContext){}
+abstract class HttpController implements IGenericController{
     
-    public function put(HttpContext $httpContext){}
+    private $config = null;
+    private $httpContext = null;
     
-    public function delete(HttpContext $httpContext){}
+    public function getConfiguration() : Configuration{
+        return $this->config;
+    }
     
-    public function options(HttpContext $httpContext){}
+    public function getHttpContext() : HttpContext{
+        return $this->httpContext;
+    }
+
+    public function get(){}
+
+    public function post(){}
     
-    public function head(HttpContext $httpContext){}
+    public function put(){}
     
-    public function service(HttpContext $httpContext) : void{
+    public function delete(){}
+    
+    public function options(){}
+    
+    public function head(){}
+    
+    public function service(Configuration $config, HttpContext $httpContext) : void{
+        
+        $this->config = $config;
+        $this->httpContext = $httpContext;
 
         switch($httpContext->getRequest()->getMethod()){
             case 'GET':
-                $this->get($httpContext);
+                $this->get();
                 break;
             
             case 'POST':
-                $this->post($httpContext);
+                $this->post();
                 break;
             
             case 'PUT':
-                $this->put($httpContext);
+                $this->put();
                 break;
             
             case 'DELETE':
-                $this->delete($httpContext);
+                $this->delete();
                 break;
             
             case 'OPTIONS':
-                $this->options($httpContext);
+                $this->options();
                 break;
             
             case 'HEAD':
-                $this->head($httpContext);
+                $this->head();
                 break;
         }
     }

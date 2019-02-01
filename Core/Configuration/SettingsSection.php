@@ -2,17 +2,17 @@
 
 namespace Core\Configuration;
 
-class SettingsSection implements IConfigurationSection{
+class SettingsSection extends ConfigurationSection{
     
     private $settings = [];
     
-    public function execute(Configuration $configuration, \XmlConfigElement $xml){
+    public function execute(\XmlConfigElement $xml){
         
         if($xml->hasPath('settings.0.section')){
             $this->loadSettings($xml->settings[0]);
         }
 
-        $configuration->add('settings', new \Core\Common\Arr($this->settings));
+        return  new \Core\Common\Arr($this->settings);
     }
     
     private function loadSettings($settings){ 

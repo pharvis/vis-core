@@ -4,41 +4,38 @@ namespace Core\Web;
 
 use Core\Common\Obj;
 use Core\Common\Str;
-use Core\Configuration\ConfigurationManager;
+use Core\Configuration\Configuration;
 use Core\Configuration\ExceptionHandlerSection;
 use Core\Configuration\RouteSection;
 use Core\Configuration\SettingsSection;
-use Core\Configuration\ModulesSection;
 use Core\Web\Http\Server;
 use Core\Web\Http\Request;
 use Core\Web\Http\Response;
 use Core\Web\Http\HttpContext;
-use Core\Web\Http\GenericController;
+use Core\Web\Http\IGenericController;
 use Core\Web\Http\HttpException;
 use Core\Web\Http\ControllerNotFoundException;
 
 final class Application{
     
-    private $configManager = null;
+    private $config = null;
     private $httpContext = null;
 
-    public function run(string $baseDir, ConfigurationManager $configManager){
+    public function run(string $baseDir, Configuration $config){
         
-        $this->configManager = $configManager;
+        $this->config = $config;
         
         $server = new Server($baseDir);
         $request = new Request($server);
         $response = new Response($server);
         $this->httpContext = new HttpContext($request, $response);
         
-        $this->configManager
-            ->executeSection(new ExceptionHandlerSection())
-            ->executeSection(new RouteSection())
-            ->executeSection(new SettingsSection())
-            ->executeSection(new ModulesSection());
+        $this->config
+            ->add('exceptionHandlers', new ExceptionHandlerSection())
+            ->add('routes', new RouteSection())
+            ->add('settings', new SettingsSection());
         
-        $routes = $this->configManager->getConfiguration()->get('routes');
-        $modules = $this->configManager->getConfiguration()->get('modules');
+        $routes = $this->config->get('routes');
 
         foreach($routes as $route){ 
             if($route->execute($request)){
@@ -49,23 +46,13 @@ final class Application{
                 )->replace('.', '\\');
 
                 if(Obj::exists($class)){
-                    $controller = new $class($this->configManager);
+                    $controller = new $class();
                 }else{
                     throw new ControllerNotFoundException("the service controller not found");
                 }
 
-                if($controller instanceof GenericController){
-
-                    foreach($modules as $module){
-                        $module->load($this->httpContext);
-                    }
-                    
-                    $controller->service($this->httpContext);
-                    
-                    foreach($modules as $module){
-                        $module->unload($this->httpContext);
-                    }
-                    
+                if($controller instanceof IGenericController){
+                    $controller->service($this->config, $this->httpContext);
                     $this->httpContext->getResponse()->flush();
                     
                 }else{
@@ -76,19 +63,19 @@ final class Application{
         throw new ControllerNotFoundException("Unable to dispatch a controller. No routes matched the request uri.");
     }
     
-    public function error(\Exception $e){ print_R($e);
+    public function error(\Exception $e){
         $exceptionType = get_class($e);
 
-        foreach($this->configManager->getConfiguration()->get('exceptionHandlers') as $handler){
+        foreach($this->config->get('exceptionHandlers') as $handler){
             if($handler->exception == $exceptionType || $handler->exception =='*'){
                 
                 $class = (string)Str::set($handler->class)->replace('.', '\\');
 
-                $controller = new $class($this->configManager);
+                $controller = new $class();
                 
-                if($controller instanceof GenericController){
+                if($controller instanceof IGenericController){
                     $this->httpContext->getRequest()->setException($e);
-                    $controller->service($this->httpContext);
+                    $controller->service($this->config, $this->httpContext);
                     $this->httpContext->getResponse()->flush();
                 }
             }

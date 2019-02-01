@@ -4,9 +4,9 @@ namespace Core\Configuration;
 
 use Core\Web\Routing\Route;
 
-class RouteSection implements IConfigurationSection{
+class RouteSection extends ConfigurationSection{
     
-    public function execute(Configuration $configuration, \XmlConfigElement $xml){
+    public function execute(\XmlConfigElement $xml){
         $routes = [];
 
         if($xml->hasPath('routing.0.route')){
@@ -24,7 +24,7 @@ class RouteSection implements IConfigurationSection{
             }
         }
         
-        $configuration->add('routes', $routes);
+        return $routes;
     }
 }
 
