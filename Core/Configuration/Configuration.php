@@ -21,10 +21,9 @@ final class Configuration{
      * Adds a configuration section. Throws ConfigurationException if the
      * configuration section name already exists.
      */
-    public function add(string $name, ConfigurationSection $section) : Configuration{
+    public function add(string $name, IConfigurationSection $section) : Configuration{
         if(!$this->exists($name, $this->collection)){
-            $section->setConfiguration($this);
-            $this->collection[$name] = $section->execute($this->xml);
+            $this->collection[$name] = $section->execute($this, $this->xml);
         }else{
             throw new ConfigurationException(sprintf("Configuration section '%s' already exists. Section cannot be overriden.", $name), $name);
         }

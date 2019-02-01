@@ -2,9 +2,16 @@
 
 namespace Core\Configuration;
 
-class ExceptionHandlerSection extends ConfigurationSection{
+/**
+ * Handles the exceptionHandlers element in an XML configuration file.
+ */
+class ExceptionHandlerSection implements IConfigurationSection{
     
-    public function execute(\XmlConfigElement $xml){
+    /**
+     * Gets an array of Exception handler classes by processing the 
+     * exceptionHandlers XML element.
+     */
+    public function execute(Configuration $config, \XmlConfigElement $xml){
 
         $exceptionHandlers = [];
 

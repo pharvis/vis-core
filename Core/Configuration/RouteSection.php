@@ -4,9 +4,16 @@ namespace Core\Configuration;
 
 use Core\Web\Routing\Route;
 
-class RouteSection extends ConfigurationSection{
+/**
+ * Handles the routes element in an XML configuration file.
+ */
+class RouteSection implements IConfigurationSection{
     
-    public function execute(\XmlConfigElement $xml){
+    /**
+     * Gets an array of Route objects by processing the routes XML element.
+     */
+    public function execute(Configuration $config, \XmlConfigElement $xml){
+        
         $routes = [];
 
         if($xml->hasPath('routing.0.route')){
