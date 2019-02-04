@@ -16,12 +16,18 @@ use Core\Web\Http\IGenericController;
 use Core\Web\Http\HttpException;
 use Core\Web\Http\ControllerNotFoundException;
 
+/**
+ * This class represents the application. This class cannot be inherited.
+ */
 final class Application{
     
     private $config = null;
     private $httpContext = null;
 
-    public function run(string $baseDir, Configuration $config){
+    /**
+     * Starts the application.
+     */
+    public function start(string $baseDir, Configuration $config){
         
         $this->config = $config;
         
@@ -48,7 +54,7 @@ final class Application{
                 if(Obj::exists($class)){
                     $controller = new $class();
                 }else{
-                    throw new ControllerNotFoundException("the service controller not found");
+                    throw new ControllerNotFoundException(sprintf("The specified controller '%s' does not exist.", $class), $class, $request->getUrl()->getRawUri());
                 }
 
                 if($controller instanceof IGenericController){
@@ -56,13 +62,16 @@ final class Application{
                     $this->httpContext->getResponse()->flush();
                     
                 }else{
-                    throw new HttpException("$class must be an instance of GenericService");
+                    throw new HttpException(springf("%s must be an instance of IGenericController.", $class));
                 }
             }
         }
         throw new ControllerNotFoundException("Unable to dispatch a controller. No routes matched the request uri.");
     }
     
+    /**
+     * This method is called when an unhandled exception is thrown.
+     */
     public function error(\Exception $e){
         $exceptionType = get_class($e);
 

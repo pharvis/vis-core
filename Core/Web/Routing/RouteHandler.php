@@ -14,7 +14,7 @@ class RouteHandler{
         if(preg_match('#^'.$pattern.'$#', $request->getUrl()->getUri(), $matches)){
             foreach($matches as $key => $value){
                 if(!is_int($key)){
-                    $request->addParameter($key, $value);
+                    $request->getParameters()->add($key, $value);
                 }
             }
             return true;

@@ -19,6 +19,10 @@ class Route{
         $this->controllerClass = $controllerClass;
     }
     
+    public function getUrlPattern() : string{
+        return $this->urlPattern;
+    }
+    
     public function getControllerClass() : string{
         return $this->controllerClass;
     }
