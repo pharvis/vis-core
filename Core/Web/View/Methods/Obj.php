@@ -2,15 +2,17 @@
 
 namespace Core\Web\View\Methods;
 
-class Obj extends ViewMethod{
+class Obj implements IViewMethod{
     
     protected $object = null;
     
-    public function __construct($object){
+    public function __construct(object $object){
         $this->object = $object;
     }
     
-    public function execute(){
-        return $this->object;
+     public function execute() : \Closure{
+        return function(){
+            return $this->object;
+        };
     }
 }

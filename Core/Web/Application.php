@@ -14,6 +14,7 @@ use Core\Web\Http\Response;
 use Core\Web\Http\HttpContext;
 use Core\Web\Http\IGenericController;
 use Core\Web\Http\HttpException;
+use Core\Web\Http\ResourceNotFoundException;
 use Core\Web\Http\ControllerNotFoundException;
 
 /**
@@ -66,14 +67,14 @@ final class Application{
                 }
             }
         }
-        throw new ControllerNotFoundException("Unable to dispatch a controller. No routes matched the request uri.");
+        throw new ResourceNotFoundException("Unable to dispatch a controller. No routes matched the request uri.", $request->getUrl()->getRawUri());
     }
     
     /**
      * This method is called when an unhandled exception is thrown.
      */
     public function error(\Exception $e){
-        $exceptionType = get_class($e);
+        $exceptionType = get_class($e); print_R($e); exit;
 
         foreach($this->config->get('exceptionHandlers') as $handler){
             if($handler->exception == $exceptionType || $handler->exception =='*'){

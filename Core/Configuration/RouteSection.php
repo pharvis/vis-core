@@ -2,6 +2,7 @@
 
 namespace Core\Configuration;
 
+use Core\Common\Obj;
 use Core\Web\Routing\Route;
 
 /**
@@ -24,8 +25,8 @@ class RouteSection implements IConfigurationSection{
                 foreach($patterns as $pattern){
                     $routes[] = new Route(
                         $pattern,
-                        'Core.Web.Routing.RouteHandler',
-                        $route->class[0]
+                        $route->class[0],
+                        Obj::create('Core.Web.Routing.RouteHandler')->get()    
                     );
                 }
             }

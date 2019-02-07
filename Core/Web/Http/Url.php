@@ -2,6 +2,9 @@
 
 namespace Core\Web\Http;
 
+/**
+ * Encapsulates information about the requested URL.
+ */
 class Url {
     
     private $httpScheme = '';
@@ -11,6 +14,9 @@ class Url {
     private $url = '';
     private $baseUrl = '';
 
+    /**
+     * Initializes a new instance of Response with server variables.
+     */
     public function __construct(Server $server){
         $this->httpScheme = $server->get('REQUEST_SCHEME');
         $this->host = $server->get('HTTP_HOST');
@@ -27,22 +33,37 @@ class Url {
         $this->url = $this->httpScheme . '://' . $this->host . $port . '/' . $this->rawUri;
     }
     
+    /**
+     * Gets the HTTP scheme.
+     */
     public function getHttpScheme() : string{
         return $this->httpScheme;
     }
     
+    /**
+     * Gets the host name.
+     */
     public function getHost() : string{
         return $this->host;
     }
     
+    /**
+     * Gets the raw request uri including query parameters.
+     */
     public function getRawUri() : string{
         return $this->rawUri;
     }
     
+    /**
+     * Gets the request uri excluding query parameters.
+     */
     public function getUri() : string{
         return $this->uri;
     }
     
+    /**
+     * Gets the base url excluding the uri.
+     */
     public function getBaseUrl() : string{
         return $this->baseUrl;
     }

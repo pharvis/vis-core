@@ -2,35 +2,40 @@
 
 namespace Core\Web\Routing;
 
-use Core\Common\Obj;
 use Core\Web\Http\Request;
-use Core\Web\Http\HttpException;
 use Core\Web\Routing\RouteHandler;
 
+/**
+ * Handles a route defined in web.xml using a RouteHandler.
+ */
 class Route{
 
-    protected $urlPattern;
-    protected $routeHandler;
-    protected $controllerClass;
+    protected $urlPattern = '';
+    protected $controllerClass = '';
+    protected $routeHandler = null;
     
-    public function __construct(string $urlPattern, string $routeHandler, string $controllerClass){
+    /**
+     * Initializes a new instance of Route a $urlPattern, $routeHandler and the
+     * controller class associated with the route.
+     */
+    public function __construct(string $urlPattern, string $controllerClass, RouteHandler $routeHandler){
         $this->urlPattern = $urlPattern;
-        $this->routeHandler =  Obj::create($routeHandler)->get();
         $this->controllerClass = $controllerClass;
+        $this->routeHandler =  $routeHandler;
     }
-    
-    public function getUrlPattern() : string{
-        return $this->urlPattern;
-    }
-    
+
+    /**
+     * Gets the controller class associated with the current Route instance.
+     */
     public function getControllerClass() : string{
         return $this->controllerClass;
     }
 
-    public function execute(Request $request){
-        if($this->routeHandler instanceof RouteHandler){
-            return $this->routeHandler->execute($request, $this->urlPattern);
-        }
-        throw new HttpException(sprintf('RouteHandler class "%s" must inherit from Core\Web\Routing\RouteHandler', get_class($this->routeHandler)));
+    /**
+     * Executes the associated RouteHandler, which returns a boolean value
+     * indicating if the route matched the requested uri.
+     */
+    public function execute(Request $request) : bool{
+        return $this->routeHandler->execute($request, $this->urlPattern);
     }
 }

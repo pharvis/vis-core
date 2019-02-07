@@ -5,6 +5,9 @@ namespace Core\Web\Http;
 use Core\Common\Arr;
 use Core\Common\Str;
 
+/**
+ * Encapsulates HTTP client response information. This class cannot be inherited.
+ */
 final class Response{
     
     private $server = null;
@@ -63,6 +66,9 @@ final class Response{
         505 => '505 HTTP Version Not Supported'
     );
 
+    /**
+     * Initializes a new instance of Response with server variables.
+     */
     public function __construct(Server $server){
         $this->server = $server; 
         $this->cookies = new CookieCollection();
@@ -70,39 +76,57 @@ final class Response{
         $this->output = new Str();
     }
     
-    public function addHeader(string $header, string $value){
-        $this->headers->add($header, $value);
-    }
-    
-    public function setContentType(string $contentType, string $encoding = 'UTF8'){
-        $this->addHeader('Content-type', $contentType . '; charset=' . $encoding);
+    /**
+     * Sets the response content type and encoding. Gets the current Response object.
+     */
+    public function setContentType(string $contentType, string $encoding = 'UTF8') : Response{
+        $this->headers->add('Content-Type', $contentType . '; charset=' . $encoding);
         return $this;
     }
     
-    public function setStatusCode(int $statusCode){
+    /**
+     * Sets the response status code. Gets the current Response object.
+     */
+    public function setStatusCode(int $statusCode) : Response{
         $this->statusCode = $statusCode;
         return $this;
     }
     
-    public function getHeaders(){
+    /**
+     * Gets the response headers collection.
+     */
+    public function getHeaders() : Arr{
         return $this->headers;
     }
     
-    public function getCookies(){
+    /**
+     * Gets the response cookie collection.
+     */
+    public function getCookies() : CookieCollection{
         return $this->cookies;
     }
 
-    public function write(string $string){
+    /**
+     * Appends response data to the current Response object. Gets the current
+     * Response object.
+     */
+    public function write(string $string) : Response{
         $this->output->append($string);
         return $this;
     }
     
-    public function redirect(string $location){
+    /**
+     * Redirects the client to the specified $location.
+     */
+    public function redirect(string $location) : void{
         header('Location: ' . $location);
         exit;
     }
     
-    public function flush(){
+    /**
+     * Flushes all response data including headers and cookies to the client.
+     */
+    public function flush() : void{
         if(!headers_sent()){ 
 
             if(array_key_exists($this->statusCode, static::$statusCodes)){
