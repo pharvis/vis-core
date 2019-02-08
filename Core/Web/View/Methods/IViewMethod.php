@@ -10,5 +10,5 @@ interface IViewMethod{
     /**
      * Gets a Closure that will be bound to a view, which supports view methods. 
      */
-    public function execute() : \Closure;
+    public function getClosure() : \Closure;
 }

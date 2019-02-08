@@ -29,32 +29,32 @@ abstract class HttpController implements IGenericController{
     /**
      * Called by the service() method to handle a GET request.
      */
-    public function get(){}
+    public function get() : void{}
 
     /**
      * Called by the service() method to handle a POST request.
      */
-    public function post(){}
+    public function post() : void{}
     
     /**
      * Called by the service() method to handle a PUT request.
      */
-    public function put(){}
+    public function put() : void{}
     
     /**
      * Called by the service() method to handle a DELETE request.
      */
-    public function delete(){}
+    public function delete() : void{}
     
     /**
      * Called by the service() method to handle a OPTIONS request.
      */
-    public function options(){}
+    public function options() : void{}
     
     /**
      * Called by the service() method to handle a HEAD request.
      */
-    public function head(){}
+    public function head() : void{}
     
     /**
      * The service() method handles standard HTTP requests by dispatching them 

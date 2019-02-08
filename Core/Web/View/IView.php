@@ -3,7 +3,7 @@
 namespace Core\Web\View;
 
 /**
- * Defines the methods that are required for a view.
+ * Defines the method that is required to render a view.
  */
 interface IView{
     

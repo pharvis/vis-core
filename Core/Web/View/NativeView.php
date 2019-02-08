@@ -111,14 +111,14 @@ class NativeView implements IView{
             }
             return $output;
         }
-        throw new ViewFileNotFoundException("The view file was not found: searched tried " . print_R($this->viewFiles, true));
+        throw new ViewFileNotFoundException("The view file was not found. Searched the following locations: " . $this->viewFiles->join('; '), $this->viewFiles->toArray());
     }
     
     public function __call($name, $arguments){ 
         if($this->methods->exists($name)){
-            $closure = $this->methods->get($name)->execute();
-            $closure->bindTo($this);
-            return $closure(...$arguments);
+            $closure = $this->methods->get($name)->getClosure();
+            $method = $closure->bindTo($this);
+            return $method(...$arguments);
         }
         throw new \Exception(sprintf("Call to undefined function %s()", $name));
     }

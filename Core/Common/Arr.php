@@ -188,6 +188,14 @@ class Arr implements \ArrayAccess, \IteratorAggregate, \Countable{
     }
     
     /**
+     * Gets a new Str object where each element in this array is joined 
+     * using $char.
+     */
+    public function join(string $char) : Str{
+        return new Str(join($char, $this->collection));
+    }
+    
+    /**
      * Gets the array as a PHP serialized string.
      */
     public function serialize() : string{
