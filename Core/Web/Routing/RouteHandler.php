@@ -8,16 +8,15 @@ use Core\Web\Http\Request;
  * A RouteHandler class provides the logic to determine if a route matched the
  * request uri.
  */
-class RouteHandler{
+class RouteHandler implements IRouteHandler{
     
     /**
-     * Gets a boolean value indicating if the request uri matched a route pattern.
-     * This method is called internally by the application class. Override this
-     * method to provide custom routing in a sub class.
+     * Gets a boolean value indicating if the request URI matched a route pattern.
+     * This method is called internally by the application class.
      */
-    public function execute(Request $request, string $urlPattern) : bool{
+    public function execute(Request $request, Route $route) : bool{
 
-        $pattern = str_replace('{', '(?P<', str_replace('}', '>[a-zA-Z0-9-_.,:;()]+)', $urlPattern));
+        $pattern = str_replace('{', '(?P<', str_replace('}', '>[a-zA-Z0-9-_.,:;()]+)', $route->getUrlPattern()));
         $matches = [];
 
         if(preg_match('#^'.$pattern.'$#', $request->getUrl()->getUri(), $matches)){

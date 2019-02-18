@@ -7,7 +7,7 @@ use Core\Common\Arr;
 /**
  * Encapsulates HTTP client request information. This class cannot be inherited.
  */
-final class Request{
+final class Request implements \ArrayAccess, \IteratorAggregate{
     
     private $server = null;
     private $url = null;
@@ -202,5 +202,41 @@ final class Request{
     public function getBody() : string{
         $body = fopen('php://input', 'r');
         return $body ? $body : '';
+    }
+    
+    /**
+     * Gets a boolean value indicating if a request data item exists using the
+     * specified $offset when accessing this instance as an array.
+     */
+    public function offsetExists($offset) : bool{
+        return $this->getCollection()->exists($offset);
+    }
+
+    /**
+     * Gets a request data item when accessing this instance as an array.
+     */
+    public function offsetGet($offset){
+        return $this->collection->get($offset);
+    }
+    
+    /**
+     * Throws an Exception. This operation is not supported.
+     */
+    public function offsetSet($offset, $value){
+        throw new \Exception('This operation is not supported.');
+    }
+
+    /**
+     * Throws an Exception. This operation is not supported.
+     */
+    public function offsetUnset($offset){
+        throw new \Exception('This operation is not supported.');
+    }
+    
+    /**
+     * Gets an instance of ArrayIterator to iterate over the request data.
+     */
+    public function getIterator() : \ArrayIterator{
+        return $this->collection->getIterator();
     }
 }

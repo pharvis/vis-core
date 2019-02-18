@@ -83,7 +83,7 @@ class NativeView implements IView{
     /**
      * Returns the string output of a rendered view.
      */
-    public function render(array $params = []) : string{
+    public function render(array $params = []) : string{ 
         $this->parameters->merge($params);
         extract($this->parameters->toArray());
         $output = '';
@@ -107,7 +107,7 @@ class NativeView implements IView{
                     $this->layoutView->getViewMethods()->add($name, $viewMethod);
                 }
                 $this->layoutView->setChildOutput($output); 
-                $output =  $this->layoutView->render($params);
+                $output =  $this->layoutView->render($this->parameters->toArray());
             }
             return $output;
         }

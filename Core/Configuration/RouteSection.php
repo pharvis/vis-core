@@ -19,14 +19,20 @@ class RouteSection implements IConfigurationSection{
 
         if($xml->hasPath('routing.0.route')){
             foreach($xml->routing[0]->route as $route){
-
+                
+                $routeAttributes = $route->getAttributes();
                 $patterns = $route->urls[0]->urlPattern;
 
+                if(array_key_exists('handler', $routeAttributes)){
+                    $routeHandler = Obj::create($routeAttributes['handler'])->get();
+                }else{
+                    $routeHandler = Obj::create('Core.Web.Routing.RouteHandler')->get();
+                }
                 foreach($patterns as $pattern){
                     $routes[] = new Route(
                         $pattern,
                         $route->class[0],
-                        Obj::create('Core.Web.Routing.RouteHandler')->get()    
+                        $routeHandler
                     );
                 }
             }
