@@ -5,8 +5,8 @@ namespace Core\Web\Routing;
 use Core\Web\Http\Request;
 
 /**
- * A RouteHandler class provides the logic to determine if a route matched the
- * request uri.
+ * Implements the IRouteHandler interface to provide the logic to determine if 
+ * a route matched the request URI.
  */
 class RouteHandler implements IRouteHandler{
     

@@ -34,7 +34,7 @@ class Route{
     /**
      * Sets the controller class associated with the current Route instance.
      */
-    public function setControllerClass(string $controllerClass){
+    public function setControllerClass(string $controllerClass) : void{
         $this->controllerClass = $controllerClass;
     }
     

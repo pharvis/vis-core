@@ -70,6 +70,19 @@ final class Str implements \ArrayAccess, \IteratorAggregate, \Countable{
     /**
      * Gets the string before the last occurrence of $needle.
      */
+    public function getBeforeFirstIndexOf(string $needle) : Str{   
+        $pos = stripos($this->string, $needle);
+        if($pos > -1){
+            $this->string = substr($this->string, 0, $pos);
+        }else{
+            $this->string = '';
+        }
+        return $this;
+    }
+    
+    /**
+     * Gets the string before the last occurrence of $needle.
+     */
     public function getBeforeLastIndexOf(string $needle) : Str{   
         $pos = strripos($this->string, $needle);
         if($pos > -1){
